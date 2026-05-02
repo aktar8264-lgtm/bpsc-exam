@@ -508,7 +508,7 @@
         document.addEventListener('DOMContentLoaded', () => {
               // PWA সার্ভিস ওয়ার্কার রেজিস্টার করুন
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
+    navigator.serviceWorker.register('service-worker.js')
       .then(registration => {
         console.log('✅ ServiceWorker Registered successfully.');
       })
