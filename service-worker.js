@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bpsc-exam-prep-v3'; // ভার্সন নম্বর v3 করে দিন
+const CACHE_NAME = 'bpsc-exam-prep-v4'; // ভার্সন নম্বর v3 করে দিন
 
 const urlsToCache = [
   '.',
