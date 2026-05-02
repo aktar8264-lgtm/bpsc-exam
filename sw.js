@@ -1,21 +1,16 @@
-// একটি ভার্সন নম্বর দিন, পরে আপডেট করতে কাজে লাগবে
-const CACHE_NAME = 'bpsc-exam-prep-v1';
+// ভার্সন নম্বর আপডেট করুন, যাতে ব্রাউজার নতুন করে ক্যাশ করে
+const CACHE_NAME = 'bpsc-exam-prep-v2';
 
-// যে ফাইলগুলো অফলাইনে দেখানোর জন্য ক্যাশ (সংরক্ষণ) করতে চান
+// শুধু আপনার নিজের সাইটের প্রয়োজনীয় ফাইলগুলো ক্যাশ করুন
 const urlsToCache = [
   '/',
   '/index.html',
-  // আপনার HTML কোড থেকে ব্যবহৃত সব CSS এবং JS ফাইলের লিঙ্ক এখানে যুক্ত করুন
-  'https://fonts.googleapis.com/css?family=Noto+Sans+Bengali:wght@400;500;700&display=swap',
-  'https://cdn.jsdelivr.net/npm/chart.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
-  // আপনার আইকনগুলো
+  // আপনার আইকনগুলো (এই ফাইলগুলো অবশ্যই আপলোড করতে হবে)
   '/images/icons/icon-192x192.png',
   '/images/icons/icon-512x512.png'
 ];
 
-// ১. সার্ভিস ওয়ার্কার ইন্সটল করার সময়
+// সার্ভিস ওয়ার্কার ইন্সটল করার সময়
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -26,7 +21,7 @@ self.addEventListener('install', event => {
   );
 });
 
-// ২. নেটওয়ার্ক থেকে কোনো কিছু Fetch করার সময়
+// নেটওয়ার্ক থেকে কিছু Fetch করার সময়
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
@@ -37,12 +32,11 @@ self.addEventListener('fetch', event => {
         }
         // না পাওয়া গেলে, ইন্টারনেট থেকে নিয়ে আসো
         return fetch(event.request);
-      }
-    )
+      })
   );
 });
 
-// ৩. পুরনো ক্যাশ ডিলিট করার জন্য
+// পুরনো ক্যাশ ডিলিট করার জন্য
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
