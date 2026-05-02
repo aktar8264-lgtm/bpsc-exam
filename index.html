@@ -2327,5 +2327,475 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 </script>
+<!-- ADVANCED SYLLABUS SCRIPT - Clean Version -->
+<script>
+(function() {
+    const syllabusData = {
+        'Questions_Nursing': {
+            title: 'নার্সিং এন্ড মিডওয়াইফারি',
+            icon: '🩺',
+            color: '#0d9488',
+            gradient: 'linear-gradient(135deg, #0d9488, #0f766e)',
+            marks: 40,
+            topics: [
+                'Anatomy & Physiology (কঙ্কালতন্ত্র, পেশি, হৃদপিণ্ড, শ্বসনতন্ত্র, পরিপাকতন্ত্র, স্নায়ুতন্ত্র)',
+                'Fundamentals of Nursing (নার্সিংয়ের মূল নীতি)',
+                'Vital Signs & Assessment (Temp, Pulse, Respiration, BP)',
+                'Medical Vocabulary ও Lab Reference Ranges',
+                'Microbiology & Infection Control (ব্যাকটেরিয়া, ভাইরাস, স্টেরিলাইজেশন)',
+                'Biomedical Waste Management',
+                'First Aid & Emergency (CPR, ব্যান্ডেজিং, ট্রায়াজ)',
+                'Ethics in Nursing',
+                'Medical-Surgical Nursing: শ্বাসতন্ত্র (TB, Asthma, COPD)',
+                'Medical-Surgical Nursing: হৃদরোগ (MI, Hypertension, Heart Failure), ECG',
+                'Medical-Surgical Nursing: পরিপাকতন্ত্র (Ulcer, Hepatitis, Cirrhosis)',
+                'Medical-Surgical Nursing: রেচনতন্ত্র (Renal Failure, UTI, Dialysis)',
+                'এন্ডোক্রাইন সমস্যা (Diabetes, Thyroid)',
+                'Orthopedic Nursing (হাড় ভাঙা, প্লাস্টার, ট্র্যাকশন)',
+                'স্নায়বিক সমস্যা (Stroke, Head Injury, GCS)',
+                'Oncology (ক্যানসার নার্সিং)',
+                'Pharmacology (ওষুধের শ্রেণিবিভাগ, অ্যান্টিডোট, ড্রাগ ক্যালকুলেশন)',
+                'Midwifery Part-1: গর্ভাবস্থা, অ্যান্টিনেটাল কেয়ার, গর্ভবতীর পুষ্টি',
+                'Midwifery Part-2: Normal Labor, পার্টোগ্রাফ, Puerperium',
+                'ঝুঁকিপূর্ণ গর্ভাবস্থা (Preeclampsia, GDM, PPH, Abortion)',
+                'Pediatric Nursing (APGAR Score, নবজাতক, শিশু রোগ, বুকের দুধ)',
+                'Nutrition & Dietetics (ভিটামিন ও মিনারেলস)',
+                'Community Health Nursing (এপিডেমিওলজি, প্রিভেনশন লেভেল)',
+                'Important Health Days',
+                'Psychiatric & Mental Health (সিজোফ্রেনিয়া, ডিপ্রেশন)',
+                'Nursing Management & Administration',
+                'Research & Statistics',
+                'ICT in Nursing'
+            ]
+        },
+        'Questions_Bangla': {
+            title: 'বাংলা ভাষা ও সাহিত্য',
+            icon: '📕',
+            color: '#dc2626',
+            gradient: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+            marks: 20,
+            topics: [
+                'ভাষা, বর্ণ ও ধ্বনি',
+                'শব্দ প্রকরণ ও বাংলা ভাষার শব্দাবলী',
+                'লিঙ্গ ও বচন',
+                'ণত্ব ও ষত্ব বিধান',
+                'সন্ধি',
+                'পদ প্রকরণ',
+                'প্রত্যয় (প্রকৃতি ও প্রত্যয়)',
+                'উপসর্গ ও অনুসর্গ',
+                'কারক ও বিভক্তি',
+                'সমাস',
+                'শুদ্ধিকরণ (বানান ও বাক্য শুদ্ধি)',
+                'সমার্থক বা প্রতিশব্দ',
+                'বিপরীত শব্দ',
+                'এক কথায় প্রকাশ',
+                'বাগধারা ও প্রবাদ-প্রবচন',
+                'সমোচ্চারিত শব্দ',
+                'বাংলা সাহিত্য: প্রাচীন ও মধ্যযুগ',
+                'বাংলা সাহিত্য: আধুনিক যুগ',
+                'সাহিত্যকর্ম ও রচয়িতা',
+                'ছদ্মনাম, উপাধি, পত্রিকা ও মুক্তিযুদ্ধভিত্তিক সাহিত্য'
+            ]
+        },
+        'Questions_English': {
+            title: 'ইংরেজি গ্রামার ও ভোকাবুলারি',
+            icon: '📘',
+            color: '#2563eb',
+            gradient: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+            marks: 20,
+            topics: [
+                'Parts of Speech',
+                'Number',
+                'Article',
+                'Degree',
+                'Tense',
+                'Sentence',
+                'Right forms of Verbs',
+                'Subject-Verb Agreement',
+                'Conditionals',
+                'Transformation of Sentence',
+                'Voice (Active & Passive)',
+                'Narration (Direct & Indirect)',
+                'Appropriate Preposition',
+                'Correction / Error Detection',
+                'Group Verbs',
+                'Correct Spelling',
+                'Synonyms & Antonyms',
+                'One Word Substitution',
+                'Phrases & Idioms',
+                'Translation & Proverbs'
+            ]
+        },
+        'Questions_GK': {
+            title: 'সাধারণ জ্ঞান ও বাংলাদেশ বিষয়াবলি',
+            icon: '🌍',
+            color: '#7c3aed',
+            gradient: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
+            marks: 20,
+            topics: [
+                '২০২৪ গণঅভ্যুত্থান ও জুলাই বিপ্লব',
+                'নতুন সরকার ২০২৬ (বিএনপি): মন্ত্রিপরিষদ ও সংসদ',
+                'প্রাচীন বাংলার ইতিহাস ও জনপদ',
+                'ব্রিটিশ শাসন ও পাকিস্তান আমল',
+                'ভাষা আন্দোলন ও যুক্তফ্রন্ট নির্বাচন',
+                'বাঙালির স্বাধিকার আন্দোলন (৬ দফা, ৬৯ ও ৭০)',
+                'মহান মুক্তিযুদ্ধ ও স্বাধীনতা (সেক্টর, খেতাব, সরকার)',
+                'বাংলাদেশের সংবিধান (অনুচ্ছেদ ও সংশোধনী)',
+                'ভৌগোলিক অবস্থান, সীমানা ও ছিটমহল',
+                'নদ-নদী, পাহাড়-পর্বত, দ্বীপ ও আবহাওয়া',
+                'অর্থনীতি, বাজেট ও মেগা প্রকল্পসমূহ',
+                'উপজাতি, শিল্প, সংস্কৃতি ও জাতীয় বিষয়াবলি',
+                'স্বাস্থ্যসেবা কাঠামো ও মন্ত্রণালয়',
+                'BNMC, EPI, মাতৃ ও শিশু স্বাস্থ্য',
+                'মানবদেহ, ভিটামিন ও রোগব্যাধি',
+                'চিকিৎসা বিজ্ঞানের আবিষ্কার ও WHO, UNICEF, Red Cross',
+                'SDG ও স্বাস্থ্য খাত',
+                'বিশ্বের দেশ, রাজধানী, মুদ্রা, সীমারেখা',
+                'জাতিসংঘ, SAARC ও আন্তর্জাতিক সংগঠন',
+                'পরিবেশ, বিজ্ঞান, ICT, সাম্প্রতিক বিশ্ব ও পুরস্কার'
+            ]
+        }
+    };
+
+    // ============ CSS ============
+    function injectStyles() {
+        if (document.getElementById('syl-v3-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'syl-v3-styles';
+        style.textContent = `
+            #syllabus-page {
+                padding: 0 !important;
+                overflow: hidden !important;
+                max-width: 500px !important;
+            }
+
+            /* ---- Hero ---- */
+            .sv3-hero {
+                padding: 22px 20px 18px;
+                color: white;
+                text-align: center;
+                position: relative;
+            }
+            .sv3-back {
+                position: absolute; top: 14px; left: 14px;
+                background: rgba(255,255,255,0.2);
+                border: none; color: white;
+                padding: 6px 13px; border-radius: 20px;
+                font-size: 13px; cursor: pointer;
+                font-family: 'Noto Sans Bengali', sans-serif;
+                font-weight: 600;
+            }
+            .sv3-back:hover { background: rgba(255,255,255,0.32); }
+            .sv3-hero h2 {
+                color: white !important;
+                font-size: 19px; margin: 0 0 4px;
+            }
+            .sv3-hero p {
+                color: rgba(255,255,255,0.82) !important;
+                font-size: 13px; margin: 0;
+            }
+
+            /* ---- Mark badge ---- */
+            .sv3-mark-badge {
+                display: inline-block;
+                margin-top: 12px;
+                background: rgba(255,255,255,0.22);
+                border: 2px solid rgba(255,255,255,0.4);
+                color: white;
+                padding: 6px 20px;
+                border-radius: 30px;
+                font-size: 15px;
+                font-weight: 800;
+                letter-spacing: 0.5px;
+            }
+
+            /* ---- Q count section ---- */
+            .sv3-q-section {
+                padding: 16px 16px 12px;
+                background: #f9fafb;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            .sv3-q-label {
+                font-size: 13px;
+                font-weight: 700;
+                color: #374151;
+                margin-bottom: 10px;
+                display: block;
+            }
+            .sv3-chips {
+                display: flex; gap: 7px;
+                flex-wrap: wrap;
+                margin-bottom: 10px;
+            }
+            .sv3-chip {
+                padding: 6px 14px;
+                border-radius: 20px;
+                border: 2px solid #e5e7eb;
+                background: white;
+                font-size: 13px; font-weight: 700;
+                cursor: pointer;
+                font-family: 'Noto Sans Bengali', sans-serif;
+                color: #374151;
+                transition: all 0.18s;
+            }
+            .sv3-chip:hover { border-color: #6366f1; color: #4f46e5; }
+            .sv3-chip.sv3-sel { color: white; border-color: transparent; }
+
+            .sv3-q-input-row {
+                display: flex; gap: 10px; align-items: center;
+            }
+            .sv3-q-input {
+                flex: 1; padding: 11px;
+                border: 2px solid #e5e7eb;
+                border-radius: 10px;
+                font-size: 16px; font-weight: 700;
+                font-family: 'Noto Sans Bengali', sans-serif;
+                text-align: center;
+                transition: border-color 0.2s;
+                box-sizing: border-box;
+            }
+            .sv3-q-input:focus { outline: none; border-color: #4f46e5; }
+            .sv3-q-input.sv3-err { border-color: #dc2626; background: #fff5f5; }
+            .sv3-hint {
+                text-align: center;
+                font-size: 12px; font-weight: 600;
+                color: #16a34a; margin-top: 8px;
+            }
+            .sv3-hint.sv3-bad { color: #dc2626; }
+
+            /* ---- Start Button ---- */
+            .sv3-start-btn {
+                display: flex; align-items: center;
+                justify-content: center; gap: 8px;
+                width: 100%; padding: 14px;
+                border: none; border-radius: 12px;
+                font-size: 16px; font-weight: 800;
+                color: white; cursor: pointer;
+                font-family: 'Noto Sans Bengali', sans-serif;
+                transition: transform 0.2s, box-shadow 0.2s;
+                margin-top: 12px;
+            }
+            .sv3-start-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+            }
+
+            /* ---- Topics section ---- */
+            .sv3-topics-wrap {
+                padding: 14px 15px 20px;
+                max-height: 42vh;
+                overflow-y: auto;
+            }
+            .sv3-topics-wrap::-webkit-scrollbar { width: 4px; }
+            .sv3-topics-wrap::-webkit-scrollbar-thumb {
+                background: #c7d2fe; border-radius: 4px;
+            }
+
+            .sv3-section-title {
+                font-size: 13px; font-weight: 700;
+                color: #6b7280; text-transform: uppercase;
+                letter-spacing: 0.8px;
+                margin: 0 0 12px;
+                display: flex; align-items: center; gap: 8px;
+            }
+            .sv3-section-title::after {
+                content: '';
+                flex: 1; height: 1px; background: #e5e7eb;
+            }
+
+            .sv3-topic-item {
+                display: flex; align-items: flex-start;
+                gap: 10px; padding: 9px 12px;
+                border-radius: 10px;
+                margin-bottom: 6px;
+                background: #f9fafb;
+                border: 1px solid #f3f4f6;
+                transition: background 0.15s;
+            }
+            .sv3-topic-item:hover { background: #f0f9ff; }
+            .sv3-topic-num {
+                font-size: 11px; font-weight: 800;
+                color: white;
+                width: 22px; height: 22px;
+                border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                flex-shrink: 0; margin-top: 1px;
+            }
+            .sv3-topic-text {
+                font-size: 13px; color: #374151;
+                line-height: 1.55; flex: 1;
+            }
+
+            @media (max-width: 480px) {
+                .sv3-topics-wrap { max-height: 36vh; }
+                .sv3-hero h2 { font-size: 17px; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // ============ RENDER ============
+    function showSyllabusPage(subjectId) {
+        const data = syllabusData[subjectId];
+        if (!data) return;
+        injectStyles();
+
+        if (!document.getElementById('syllabus-page')) {
+            const pg = document.createElement('div');
+            pg.id = 'syllabus-page';
+            pg.className = 'card hidden';
+            document.body.appendChild(pg);
+        }
+
+        window._sylCurrent = { subjectId, title: data.title };
+        window._sylColors = window._sylColors || {};
+        window._sylColors[subjectId] = { color: data.color, gradient: data.gradient };
+
+        // Topics HTML
+        const topicsHTML = data.topics.map(function(t, i) {
+            return `
+                <div class="sv3-topic-item">
+                    <div class="sv3-topic-num" style="background:${data.color};">${i + 1}</div>
+                    <span class="sv3-topic-text">${t}</span>
+                </div>
+            `;
+        }).join('');
+
+        const html = `
+            <!-- Hero -->
+            <div class="sv3-hero" style="background:${data.gradient};">
+                <button class="sv3-back" onclick="showPage('student-dashboard')">← ফিরে যান</button>
+                <h2>${data.icon} ${data.title}</h2>
+                <p>BPSC পরীক্ষার সম্পূর্ণ সিলেবাস</p>
+                <div class="sv3-mark-badge">মোট নম্বর: ${data.marks}</div>
+            </div>
+
+            <!-- Q Count Section -->
+            <div class="sv3-q-section">
+                <span class="sv3-q-label">📝 কতটি প্রশ্নের পরীক্ষা দিতে চান?</span>
+                <div class="sv3-chips">
+                    <button class="sv3-chip" onclick="sv3SetCount(5,'${subjectId}')">৫</button>
+                    <button class="sv3-chip sv3-sel" style="background:${data.color};" onclick="sv3SetCount(10,'${subjectId}')">১০ ✓</button>
+                    <button class="sv3-chip" onclick="sv3SetCount(15,'${subjectId}')">১৫</button>
+                    <button class="sv3-chip" onclick="sv3SetCount(20,'${subjectId}')">২০</button>
+                    <button class="sv3-chip" onclick="sv3SetCount(25,'${subjectId}')">২৫</button>
+                    <button class="sv3-chip" onclick="sv3SetCount(30,'${subjectId}')">৩০</button>
+                </div>
+                <div class="sv3-q-input-row">
+                    <input type="number" class="sv3-q-input"
+                        id="sv3-input-${subjectId}"
+                        value="10" min="5" max="30"
+                        oninput="sv3UpdateHint(this.value,'${subjectId}')">
+                </div>
+                <div class="sv3-hint" id="sv3-hint-${subjectId}">✅ ১০টি প্রশ্নের পরীক্ষা হবে</div>
+                <button class="sv3-start-btn"
+                    style="background:${data.gradient};"
+                    onclick="sv3StartExam('${subjectId}','${data.title}')">
+                    ▶ পরীক্ষা শুরু করুন
+                </button>
+            </div>
+
+            <!-- Topics List -->
+            <div class="sv3-topics-wrap">
+                <div class="sv3-section-title">এই বিষয়গুলো থেকে প্রশ্ন আসে</div>
+                ${topicsHTML}
+            </div>
+        `;
+
+        document.getElementById('syllabus-page').innerHTML = html;
+        showPage('syllabus-page');
+    }
+
+    // ============ GLOBAL FUNCS ============
+    window.sv3SetCount = function(n, subjectId) {
+        const input = document.getElementById('sv3-input-' + subjectId);
+        if (input) { input.value = n; input.classList.remove('sv3-err'); }
+
+        const color = ((window._sylColors || {})[subjectId] || {}).color || '#4f46e5';
+        document.querySelectorAll('.sv3-chip').forEach(function(c) {
+            const val = c.onclick && c.onclick.toString().match(/sv3SetCount\((\d+)/);
+            const isThis = val && parseInt(val[1]) === n;
+            c.classList.toggle('sv3-sel', !!isThis);
+            c.style.background = isThis ? color : '';
+            // update text
+            const nums = ['৫','১০','১৫','২০','২৫','৩০'];
+            const rawNums = [5,10,15,20,25,30];
+            const idx = rawNums.indexOf(parseInt(val ? val[1] : 0));
+            if (idx >= 0) c.textContent = nums[idx] + (isThis ? ' ✓' : '');
+        });
+        sv3UpdateHint(n, subjectId);
+    };
+
+    window.sv3UpdateHint = function(val, subjectId) {
+        const hint = document.getElementById('sv3-hint-' + subjectId);
+        const input = document.getElementById('sv3-input-' + subjectId);
+        const v = parseInt(val);
+        if (!hint) return;
+        if (isNaN(v) || v < 5) {
+            hint.textContent = '⚠️ সর্বনিম্ন ৫টি প্রশ্ন দিতে হবে';
+            hint.className = 'sv3-hint sv3-bad';
+            if (input) input.classList.add('sv3-err');
+        } else if (v > 30) {
+            hint.textContent = '⚠️ সর্বোচ্চ ৩০টি প্রশ্ন দেওয়া যাবে';
+            hint.className = 'sv3-hint sv3-bad';
+            if (input) input.classList.add('sv3-err');
+        } else {
+            hint.textContent = '✅ ' + v + 'টি প্রশ্নের পরীক্ষা হবে';
+            hint.className = 'sv3-hint';
+            if (input) input.classList.remove('sv3-err');
+        }
+    };
+
+    window.sv3StartExam = function(subjectId, subjectTitle) {
+        const input = document.getElementById('sv3-input-' + subjectId);
+        const count = parseInt(input ? input.value : 10);
+
+        if (isNaN(count) || count < 5 || count > 30) {
+            if (input) input.classList.add('sv3-err');
+            sv3UpdateHint(count, subjectId);
+            return;
+        }
+
+        if (typeof window.checkExamEligibility === 'function') {
+            if (!window.checkExamEligibility(false)) return;
+        }
+
+        if (typeof incrementTodayExamCount === 'function') {
+            incrementTodayExamCount();
+        }
+
+        if (typeof currentExamSubject !== 'undefined') {
+            currentExamSubject = subjectTitle;
+        } else {
+            window.currentExamSubject = subjectTitle;
+        }
+
+        if (typeof loadQuestions === 'function') {
+            loadQuestions("get_subject_questions", { subject: subjectId, count: count });
+        }
+    };
+
+    // ============ OVERRIDE ============
+    document.addEventListener('DOMContentLoaded', function() {
+        injectStyles();
+        if (!document.getElementById('syllabus-page')) {
+            const pg = document.createElement('div');
+            pg.id = 'syllabus-page';
+            pg.className = 'card hidden';
+            document.body.appendChild(pg);
+        }
+        setTimeout(function() {
+            window.startSubjectExam = function(subjectId, subjectTitle) {
+                if (typeof window.checkExamEligibility === 'function') {
+                    if (!window.checkExamEligibility(false)) return;
+                }
+                showSyllabusPage(subjectId);
+            };
+            console.log('✅ Syllabus v3 Loaded!');
+        }, 700);
+    });
+
+})();
+</script>
 </body>
 </html>
