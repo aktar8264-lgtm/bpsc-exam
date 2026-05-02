@@ -1,16 +1,13 @@
-// ভার্সন নম্বর আপডেট করুন, যাতে ব্রাউজার নতুন করে ক্যাশ করে
-const CACHE_NAME = 'bpsc-exam-prep-v2';
+const CACHE_NAME = 'bpsc-exam-prep-v3'; // ভার্সন নম্বর v3 করে দিন
 
-// শুধু আপনার নিজের সাইটের প্রয়োজনীয় ফাইলগুলো ক্যাশ করুন
 const urlsToCache = [
-  '/',
-  '/index.html',
-  // আপনার আইকনগুলো (এই ফাইলগুলো অবশ্যই আপলোড করতে হবে)
-  '/images/icons/icon-192x192.png',
-  '/images/icons/icon-512x512.png'
+  '.',
+  'index.html',
+  'images/icons/icon-192x192.png',
+  'images/icons/icon-512x512.png'
 ];
 
-// সার্ভিস ওয়ার্কার ইন্সটল করার সময়
+// বাকি কোড অপরিবর্তিত থাকবে...
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
