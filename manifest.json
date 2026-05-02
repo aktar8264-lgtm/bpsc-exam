@@ -2,7 +2,7 @@
   "name": "BPSC পরীক্ষার প্রস্তুতি",
   "short_name": "BPSC Prep",
   "description": "BPSC পরীক্ষার প্রস্তুতির জন্য একটি স্মার্ট এক্সাম সিস্টেম।",
-  "start_url": "/index.html",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4f46e5",
