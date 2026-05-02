@@ -506,7 +506,17 @@
 
         // --- Initial Load ---
         document.addEventListener('DOMContentLoaded', () => {
-            const user = JSON.parse(localStorage.getItem('currentUser'));
+              // PWA সার্ভিস ওয়ার্কার রেজিস্টার করুন
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('✅ ServiceWorker Registered successfully.');
+      })
+      .catch(err => {
+        console.error('❌ ServiceWorker registration failed:', err);
+      });
+  }
+			const user = JSON.parse(localStorage.getItem('currentUser'));
             if (user) routeUser(user); 
             else { showPage('home-page'); loadLeaderboard('home-leaderboard'); }
         });
@@ -2798,27 +2808,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 })();
-</script>
-	<!-- Service Worker রেজিস্ট্রেশন কোড -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
-            .then(registration => {
-              console.log('PWA Service Worker registered successfully:', registration.scope);
-            })
-            .catch(error => {
-              console.error('PWA Service Worker registration failed:', error);
-            });
-        });
-      }
-    </script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js');
-    });
-  }
 </script>
 </body>
 </html>
