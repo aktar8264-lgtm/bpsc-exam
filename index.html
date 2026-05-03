@@ -212,22 +212,83 @@
         });
 
         // --- User Authentication & Routing ---
-        function handleRegistration() {
-            const name = document.getElementById('reg-name').value, phone = document.getElementById('reg-phone').value, email = document.getElementById('reg-email').value, password = document.getElementById('reg-password').value, confirmPassword = document.getElementById('reg-confirm-password').value, photoFile = document.getElementById('reg-photo').files[0];
-            if (!name || !phone || !email || !password || password !== confirmPassword) { alert("অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন এবং পাসওয়ার্ড দুটি মিলিয়ে নিন।"); return; }
-            showLoading("রেজিস্ট্রেশন করা হচ্ছে...");
+        // ✅ নিচের এই সম্পূর্ণ ফাংশনটি কপি করে আগেরটির জায়গায় পেস্ট করুন
+function handleRegistration() {
+    const name = document.getElementById('reg-name').value.trim();
+    const phone = document.getElementById('reg-phone').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const confirmPassword = document.getElementById('reg-confirm-password').value;
+    const photoFile = document.getElementById('reg-photo').files[0];
 
-            const sendDataToServer = (photoBase64 = "") => {
-                fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "register_user", name, phone, email, password, photo: photoBase64 }) })
-                .then(res => res.json()).then(data => {
-                    closeModal();
-                    if (data.status === "success") { showModal('<p>রেজিস্ট্রেশন সফল হয়েছে!</p>', [{text: "ড্যাশবোর্ডে যান", handler: () => { localStorage.setItem('currentUser', JSON.stringify(data.user)); routeUser(data.user); } }]); } 
-                    else { showModal(`<p style="color:red;">${data.message}</p>`, [{text: "ঠিক আছে"}]); }
-                }).catch(err => { closeModal(); showModal(`<p style="color:red;">সার্ভারে ত্রুটি দেখা দিয়েছে।</p>`, [{text: "ঠিক আছে"}]); });
-            };
-            if (photoFile) { resizeImage(photoFile, 800, 0.7).then(sendDataToServer).catch(err => { closeModal(); alert("ছবি প্রসেস করতে সমস্যা হয়েছে।"); }); } 
-            else { sendDataToServer(); }
-        }
+    // --- ভ্যালিডেশন অংশ (এটি আপনার ডিজাইনে কোনো প্রভাব ফেলবে না) ---
+    if (!name) { showValidationError('reg-name', 'নাম দেওয়া বাধ্যতামূলক।'); return; }
+    if (!phone) { showValidationError('reg-phone', 'ফোন নম্বর দেওয়া বাধ্যতামূলক।'); return; }
+    if (!/^[0-9]{11}$/.test(phone)) { showValidationError('reg-phone', 'ফোন নম্বর অবশ্যই ১১ সংখ্যার হতে হবে।'); return; }
+    if (!email) { showValidationError('reg-email', 'ইমেইল অ্যাড্রেস দেওয়া বাধ্যতামূলক।'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showValidationError('reg-email', 'সঠিক ইমেইল দিন। যেমন: example@gmail.com'); return; }
+    if (!password) { showValidationError('reg-password', 'পাসওয়ার্ড দেওয়া বাধ্যতামূলক।'); return; }
+    if (password.length < 6) { showValidationError('reg-password', 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।'); return; }
+    if (password !== confirmPassword) { showValidationError('reg-confirm-password', 'পাসওয়ার্ড দুটি মিলছে না।'); return; }
+    // --- ভ্যালিডেশন শেষ ---
+
+    showLoading("রেজিস্ট্রেশন করা হচ্ছে...");
+
+    const sendDataToServer = (photoBase64 = "") => {
+        
+        // ✅✅✅ মূল সংশোধন এইখানে ✅✅✅
+        // আমরা এখন ডেটা অবজেক্ট হিসেবে পাঠাচ্ছি, যা আপনার Apps Script সঠিকভাবে গ্রহণ করতে পারবে।
+        const payload = {
+            action: "register_user",
+            name: name,
+            phone: phone,
+            email: email,
+            password: password,
+            photo: photoBase64 || ""
+        };
+
+        fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            // এখানে আমরা payload অবজেক্টটিকে JSON স্ট্রিং-এ রূপান্তর করে পাঠাচ্ছি
+            body: JSON.stringify(payload) 
+        })
+        .then(res => res.json()).then(data => {
+            closeModal();
+            if (data.status === "success") {
+                showModal(
+                    `<div style="text-align:center;"><div style="font-size:50px; margin-bottom:10px;">🎉</div><h3 style="color:#28a745;">রেজিস্ট্রেশন সফল হয়েছে!</h3><p>আপনার ইমেইলে একটি ওয়েলকাম বার্তা পাঠানো হয়েছে।</p></div>`, 
+                    [{ 
+                        text: "ড্যাশবোর্ডে যান", 
+                        handler: () => { 
+                            localStorage.setItem('currentUser', JSON.stringify(data.user)); 
+                            routeUser(data.user); 
+                        } 
+                    }]
+                );
+            } else {
+                showModal(
+                    `<div style="text-align:center;"><div style="font-size:40px;">❌</div><p style="color:red; font-weight:600;">${data.message}</p></div>`, 
+                    [{ text: "আবার চেষ্টা করুন" }]
+                );
+            }
+        }).catch(() => { 
+            closeModal(); 
+            showModal(
+                `<p style="color:red;">সার্ভারে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</p>`, 
+                [{ text: "ঠিক আছে" }]
+            ); 
+        });
+    };
+
+    if (photoFile) { 
+        resizeImage(photoFile, 800, 0.7).then(sendDataToServer).catch(() => { 
+            closeModal(); 
+            alert("ছবি প্রসেস করতে সমস্যা হয়েছে।"); 
+        }); 
+    } else { 
+        sendDataToServer(); 
+    }
+}
         function handleLogin() {
             const phone = document.getElementById('username').value, pass = document.getElementById('password').value;
             if (!phone || !pass) { showModal(`<p style="color:red;">ফোন নম্বর ও পাসওয়ার্ড দিন।</p>`, [{text: "ঠিক আছে"}]); return; }
