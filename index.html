@@ -3000,382 +3000,219 @@ document.addEventListener('DOMContentLoaded', function() {
 
 })();
 </script>
-<!-- ===== END OF FIX SCRIPT ===== -->
-	<!-- ====== FINAL FIX SCRIPT - সব সমস্যার সমাধান ====== -->
+<!-- ============================================================ -->
+<!-- DAILY EXAM LIMIT & COUNTER FIX SCRIPT (v2.0)               -->
+<!-- এই স্ক্রিপ্টটি </body> ট্যাগের ঠিক আগে বসান                 -->
+<!-- ============================================================ -->
 <script>
 (function() {
     'use strict';
 
-    // =====================================================
-    // কনফিগারেশন
-    // =====================================================
-    const DAILY_LIMIT = 4;        // প্রতিদিন ৪টি পরীক্ষা
-    const RESET_HOUR = 21;        // রাত ৯টায় রিসেট
-    const ADMIN_WA = "https://wa.me/8801750733269";
-
-    // =====================================================
-    // Daily Exam Count - localStorage থেকে
-    // =====================================================
-    function getPeriodStart() {
-        const now = new Date();
-        const reset = new Date();
-        reset.setHours(RESET_HOUR, 0, 0, 0);
-        if (now < reset) reset.setDate(reset.getDate() - 1);
-        return reset.getTime();
-    }
-
-    function getTodayCount() {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user) return 0;
-        const periodStart = getPeriodStart();
-        const log = JSON.parse(localStorage.getItem('examDailyLog') || '{}');
-        const entry = log[user.phone] || { count: 0, periodStart: 0 };
-        if (entry.periodStart < periodStart) return 0;
-        return entry.count || 0;
-    }
-
-    function addTodayCount() {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user) return;
-        const periodStart = getPeriodStart();
-        const log = JSON.parse(localStorage.getItem('examDailyLog') || '{}');
-        const entry = log[user.phone] || { count: 0, periodStart: 0 };
-        
-        if (entry.periodStart < periodStart) {
-            log[user.phone] = { count: 1, periodStart };
-        } else {
-            log[user.phone] = { count: (entry.count || 0) + 1, periodStart };
-        }
-        localStorage.setItem('examDailyLog', JSON.stringify(log));
-
-        // প্রোগ্রেস বার আপডেট
-        updateProgressBar();
-    }
-
-    function getTimeLeft() {
-        const now = new Date();
-        const reset = new Date();
-        reset.setHours(RESET_HOUR, 0, 0, 0);
-        if (now >= reset) reset.setDate(reset.getDate() + 1);
-        const diff = reset - now;
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        return `${h} ঘন্টা ${m} মিনিট`;
-    }
-
-    // =====================================================
-    // প্রোগ্রেস বার আপডেট (Dashboard এ)
-    // =====================================================
-    function updateProgressBar() {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user || user.exam_permission === true) return;
-
-        const count = getTodayCount();
-        const remaining = Math.max(0, DAILY_LIMIT - count);
-        const pct = (count / DAILY_LIMIT) * 100;
-        const timeLeft = getTimeLeft();
-
-        // পুরানো নোটিস সরানো
-        const old = document.getElementById('daily-progress-notice');
-        if (old) old.remove();
-
-        // নতুন নোটিস তৈরি
-        const div = document.createElement('div');
-        div.id = 'daily-progress-notice';
-        div.style.cssText = 'margin:10px;';
-        div.innerHTML = `
-            <div style="
-                background: linear-gradient(135deg,#eff6ff,#dbeafe);
-                border: 2px solid #3b82f6;
-                border-radius: 14px;
-                padding: 16px 18px;
-            ">
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                    <span style="font-size:24px;">📋</span>
-                    <h4 style="margin:0; color:#1e40af; font-size:15px; font-weight:700;">
-                        আজকের পরীক্ষার অগ্রগতি
-                    </h4>
-                </div>
-
-                <!-- প্রোগ্রেস বার -->
-                <div style="background:#e5e7eb; border-radius:10px; height:14px; overflow:hidden; margin-bottom:8px;">
-                    <div style="
-                        width:${pct}%;
-                        height:100%;
-                        background: ${remaining > 0 
-                            ? 'linear-gradient(90deg,#3b82f6,#6366f1)' 
-                            : '#dc2626'};
-                        border-radius:10px;
-                        transition: width 0.6s ease;
-                    "></div>
-                </div>
-
-                <!-- স্ট্যাটাস -->
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <span style="font-size:13px; font-weight:700; color:#374151;">
-                        ${count}/${DAILY_LIMIT} পরীক্ষা সম্পন্ন
-                    </span>
-                    <span style="font-size:13px; font-weight:700; color:${remaining > 0 ? '#16a34a' : '#dc2626'};">
-                        ${remaining > 0 
-                            ? `✅ ${remaining}টি বাকি আছে` 
-                            : `⏰ আজ শেষ`}
-                    </span>
-                </div>
-
-                <!-- নিয়মাবলী -->
-                <div style="font-size:13px; color:#1e40af; line-height:2;">
-                    <div>✅ প্রতিদিন <strong>${DAILY_LIMIT}টি</strong> বিষয়ভিত্তিক পরীক্ষা দেওয়া যাবে</div>
-                    <div>🔄 প্রতিদিন <strong>রাত ৯টায়</strong> নতুন সুযোগ চালু হয়</div>
-                    ${remaining === 0 
-                        ? `<div>⏰ পরবর্তী সুযোগ: <strong>${timeLeft}</strong> পরে</div>` 
-                        : ''}
-                    <div>🔒 মডেল টেস্ট শুধু <strong>প্রিমিয়াম</strong> সদস্যদের জন্য</div>
-                </div>
-
-                ${remaining === 0 ? `
-                    <!-- প্রিমিয়াম অফার -->
-                    <div style="
-                        background: linear-gradient(135deg,#1e1b4b,#4f46e5);
-                        border-radius:12px;
-                        padding:14px;
-                        text-align:center;
-                        margin-top:12px;
-                    ">
-                        <p style="color:white; margin:0 0 10px; font-size:14px; font-weight:700;">
-                            🚀 আনলিমিটেড পরীক্ষার জন্য প্রিমিয়াম হোন!
-                        </p>
-                        <a href="${ADMIN_WA}?text=আমি%20প্রিমিয়াম%20হতে%20চাই"
-                           target="_blank"
-                           style="
-                               display:inline-block;
-                               background:#25d366;
-                               color:white;
-                               padding:10px 22px;
-                               border-radius:10px;
-                               text-decoration:none;
-                               font-weight:700;
-                               font-size:13px;
-                           ">
-                            📲 মাত্র ২৫০ টাকায় প্রিমিয়াম হোন
-                        </a>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-
-        // সঠিক স্থানে বসানো
-        const dashboard = document.getElementById('student-dashboard');
-        if (!dashboard) return;
-
-        const hero = dashboard.querySelector('.enh-profile-hero');
-        if (hero) {
-            hero.insertAdjacentElement('afterend', div);
-        } else {
-            dashboard.prepend(div);
-        }
-    }
-
-    // =====================================================
-    // পরীক্ষার যোগ্যতা চেক (চূড়ান্ত)
-    // =====================================================
-    window.checkExamEligibility = function(isModelTest) {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user) return false;
-
-        // প্রিমিয়াম হলে সব পারবে
-        if (user.exam_permission === true) return true;
-
-        // মডেল টেস্ট শুধু প্রিমিয়াম
-        if (isModelTest) {
-            showModal(`
-                <div style="text-align:center;">
-                    <div style="font-size:48px; margin-bottom:10px;">🔒</div>
-                    <h3 style="color:#4f46e5; margin:0 0 10px;">মডেল টেস্ট - প্রিমিয়াম</h3>
-                    <p style="font-size:14px; color:#555; margin:0 0 18px;">
-                        মডেল টেস্ট শুধুমাত্র প্রিমিয়াম সদস্যদের জন্য।
-                    </p>
-                    <div style="background:linear-gradient(135deg,#fbbf24,#f97316); border-radius:12px; padding:12px; margin-bottom:14px;">
-                        <div style="font-size:13px; color:#1c1c1c; margin-bottom:3px; font-weight:600;">
-                            বিকাশ/নগদ/রকেট Send Money করুন:
-                        </div>
-                        <div style="font-size:22px; font-weight:800; color:#1c1c1c; letter-spacing:2px;">
-                            01750733269
-                        </div>
-                        <div style="font-size:18px; font-weight:900; color:#1c1c1c; margin-top:4px;">
-                            মাত্র ২৫০ টাকা!
-                        </div>
-                    </div>
-                    <a href="${ADMIN_WA}?text=আমি%20মডেল%20টেস্ট%20দিতে%20চাই।%20প্রিমিয়াম%20হতে%20চাই।"
-                       target="_blank"
-                       style="display:block; background:#25d366; color:white; padding:13px; border-radius:12px; text-decoration:none; font-weight:700; font-size:14px;">
-                        📲 WhatsApp এ যোগাযোগ করুন
-                    </a>
-                </div>`,
-                [{ text: "বন্ধ করুন", class: "btn-danger" }]
-            );
-            return false;
-        }
-
-        // দৈনিক লিমিট চেক
-        const count = getTodayCount();
-        if (count >= DAILY_LIMIT) {
-            const timeLeft = getTimeLeft();
-            showModal(`
-                <div style="text-align:center;">
-                    <div style="font-size:48px; margin-bottom:10px;">⏰</div>
-                    <h3 style="color:#dc2626; margin:0 0 8px;">আজকের পরীক্ষা শেষ!</h3>
-                    <p style="font-size:14px; color:#555; margin:0 0 14px;">
-                        আপনি আজকের <strong>${DAILY_LIMIT}টি</strong> পরীক্ষা দিয়েছেন।
-                    </p>
-
-                    <div style="background:#fffbe6; border:2px solid #ffc107; border-radius:12px; padding:12px; margin-bottom:14px;">
-                        <p style="margin:0; font-size:14px; color:#856404; font-weight:700;">
-                            ⏱️ পরবর্তী সুযোগ: <strong>${timeLeft}</strong> পরে
-                        </p>
-                        <p style="margin:5px 0 0; font-size:12px; color:#856404;">
-                            (রাত ৯টায় নতুন সেশন শুরু হয়)
-                        </p>
-                    </div>
-
-                    <!-- প্রিমিয়াম অফার -->
-                    <div style="background:linear-gradient(135deg,#1e1b4b,#4f46e5); border-radius:14px; padding:16px; margin-bottom:14px;">
-                        <p style="color:white; font-size:15px; font-weight:700; margin:0 0 8px;">
-                            আনলিমিটেড পরীক্ষার জন্য প্রিমিয়াম হোন!
-                        </p>
-                        <div style="background:linear-gradient(135deg,#fbbf24,#f97316); border-radius:10px; padding:10px; margin-bottom:10px;">
-                            <div style="font-size:12px; color:#1c1c1c; font-weight:600;">
-                                📱 Send Money নম্বর:
-                            </div>
-                            <div style="font-size:20px; font-weight:800; color:#1c1c1c; letter-spacing:2px;">
-                                01750733269
-                            </div>
-                            <div style="font-size:16px; font-weight:900; color:#1c1c1c;">
-                                মাত্র ২৫০ টাকা!
-                            </div>
-                        </div>
-                        <a href="${ADMIN_WA}?text=আমি%20প্রিমিয়াম%20হতে%20চাই।%20২৫০%20টাকা%20পাঠাচ্ছি।"
-                           target="_blank"
-                           style="display:block; background:#25d366; color:white; padding:12px; border-radius:10px; text-decoration:none; font-weight:700; font-size:14px;">
-                            📲 WhatsApp এ Screenshot পাঠান
-                        </a>
-                    </div>
-                </div>`,
-                [{ text: "বন্ধ করুন", class: "btn-danger" }]
-            );
-            return false;
-        }
-
-        return true;
-    };
-
-    // =====================================================
-    // startSubjectExam - চূড়ান্ত ভার্সন
-    // =====================================================
-    window.startSubjectExam = function(subjectId, subjectTitle) {
-        // যোগ্যতা চেক
-        if (!window.checkExamEligibility(false)) return;
-
-        window.currentExamSubject = subjectTitle;
-
-        const content = `
-            <h3 style="margin-bottom:10px;">${subjectTitle}</h3>
-            <p style="margin-bottom:10px;">কতগুলো প্রশ্নের পরীক্ষা দিতে চান?</p>
-            <input type="number" id="q-count-input" class="input-field" 
-                   value="10" min="5" max="30"
-                   style="width:100%; padding:12px; font-size:16px; text-align:center;
-                          border:2px solid #e5e7eb; border-radius:10px; margin-bottom:8px;">
-            <p id="q-count-hint" style="font-size:12px; color:#6b7280; text-align:center; font-weight:600;">
-                📌 সর্বনিম্ন ৫টি, সর্বোচ্চ ৩০টি
-            </p>
-        `;
-
-        const actions = [
-            {
-                text: "পরীক্ষা শুরু করুন",
-                handler: function() {
-                    const inp = document.getElementById('q-count-input');
-                    const count = parseInt(inp ? inp.value : 10);
-                    
-                    if (isNaN(count) || count < 5 || count > 30) {
-                        alert('৫ থেকে ৩০ এর মধ্যে সংখ্যা দিন!');
-                        return false;
-                    }
-
-                    // ✅ কাউন্ট বাড়ানো
-                    addTodayCount();
-
-                    // ✅ প্রশ্ন লোড করা
-                    if (typeof loadQuestions === 'function') {
-                        loadQuestions("get_subject_questions", {
-                            subject: subjectId,
-                            count: count
-                        });
-                    }
-                }
-            },
-            { text: "বাতিল করুন", class: "btn-danger" }
-        ];
-
-        if (typeof showModal === 'function') {
-            showModal(content, actions);
-        }
-    };
-
-    // =====================================================
-    // startModelTest - চূড়ান্ত ভার্সন
-    // =====================================================
-    window.startModelTest = function() {
-        if (!window.checkExamEligibility(true)) return;
-
-        window.currentExamSubject = "BPSC মডেল টেস্ট";
-
-        const content = `
-            <h3>BPSC মডেল টেস্ট</h3>
-            <p>৫০টি প্রশ্ন • ৩০ মিনিট • নেগেটিভ মার্কিং</p>
-        `;
-
-        const actions = [
-            {
-                text: "শুরু করুন",
-                handler: function() {
-                    if (typeof loadQuestions === 'function') {
-                        loadQuestions("get_model_test_questions", {}, 30 * 60);
-                    }
-                }
-            },
-            { text: "বাতিল করুন", class: "btn-danger" }
-        ];
-
-        if (typeof showModal === 'function') {
-            showModal(content, actions);
-        }
-    };
-
-    // =====================================================
-    // displayStudentDashboard - চূড়ান্ত ভার্সন
-    // =====================================================
-    const _baseDisplay = window.displayStudentDashboard;
-    window.displayStudentDashboard = function(user) {
-        if (typeof _baseDisplay === 'function') {
-            _baseDisplay(user);
-        }
-        // প্রোগ্রেস বার যোগ করা
-        setTimeout(updateProgressBar, 300);
-    };
-
-    // =====================================================
-    // লগইনের পর স্বয়ংক্রিয়ভাবে চালু হবে
-    // =====================================================
     document.addEventListener('DOMContentLoaded', function() {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (user && user.role !== 'admin') {
-            setTimeout(updateProgressBar, 500);
-        }
-        console.log("✅ Final Fix Script চালু হয়েছে!");
-    });
+        console.log("🚀 Daily Limit & Counter Fix Script v2.0 is running...");
 
+        // ===== ১. কনফিগারেশন এবং হেল্পার ফাংশন =====
+        const FREE_DAILY_EXAM_LIMIT = 4;
+        const RESET_HOUR = 21; // রাত ৯টা
+
+        function getPeriodStart() {
+            const now = new Date();
+            const resetTimeToday = new Date();
+            resetTimeToday.setHours(RESET_HOUR, 0, 0, 0);
+            if (now.getTime() < resetTimeToday.getTime()) {
+                resetTimeToday.setDate(resetTimeToday.getDate() - 1);
+            }
+            return resetTimeToday.getTime();
+        }
+
+        function getTodayExamCount() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) return 0;
+            const periodStart = getPeriodStart();
+            const examLog = JSON.parse(localStorage.getItem('dailyExamLog') || '{}');
+            const userLog = examLog[user.phone] || { count: 0, periodStart: 0 };
+            if (userLog.periodStart < periodStart) {
+                return 0;
+            }
+            return userLog.count || 0;
+        }
+
+        function getNextResetTime() {
+            const now = new Date();
+            const resetTime = new Date();
+            resetTime.setHours(RESET_HOUR, 0, 0, 0);
+            if (now >= resetTime) {
+                resetTime.setDate(resetTime.getDate() + 1);
+            }
+            const diff = resetTime - now;
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            return `${hours} ঘন্টা ${minutes} মিনিট`;
+        }
+
+        // ===== ২. পরীক্ষার যোগ্যতা চেক করার চূড়ান্ত ফাংশন =====
+        // এই ফাংশনটি আগের সব checkExamEligibility কে ওভাররাইড করবে
+        window.checkExamEligibility = function(isModelTest = false) {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) return false;
+
+            // প্রিমিয়াম ব্যবহারকারীর জন্য সবসময় অ্যাক্সেস থাকবে
+            if (user.exam_permission === true) return true;
+
+            // মডেল টেস্ট শুধু প্রিমিয়ামদের জন্য
+            if (isModelTest) {
+                const content = `
+                    <div style="text-align:center;">
+                        <div style="font-size:42px;">🔒</div>
+                        <h3 style="color:#4f46e5;">মডেল টেস্ট - প্রিমিয়াম ফিচার</h3>
+                        <p style="font-size:14px; color:#555;">মডেল টেস্ট শুধুমাত্র <strong>প্রিমিয়াম সদস্যদের</strong> জন্য।</p>
+                        <a href="https://wa.me/8801750733269?text=আমি%20প্রিমিয়াম%20হতে%20চাই" target="_blank" style="display:block; background:#25d366; color:white; padding:12px; border-radius:10px; text-decoration:none; font-weight:700; margin-top:15px;">📲 মাত্র ৳২৫০ টাকায় প্রিমিয়াম হোন</a>
+                    </div>`;
+                showModal(content, [{ text: "বন্ধ করুন", class: "btn-danger" }]);
+                return false;
+            }
+
+            // দৈনিক লিমিট চেক
+            const todayCount = getTodayExamCount();
+            if (todayCount >= FREE_DAILY_EXAM_LIMIT) {
+                const timeLeft = getNextResetTime();
+                const content = `
+                    <div style="text-align:center;">
+                        <div style="font-size:42px;">⏰</div>
+                        <h3 style="color:#dc3545;">আজকের পরীক্ষা শেষ!</h3>
+                        <p style="font-size:13px; color:#555;">আপনি আজকের <strong>${FREE_DAILY_EXAM_LIMIT}টি</strong> বিষয়ভিত্তিক পরীক্ষা দিয়েছেন।</p>
+                        <div style="background:#fff3cd; border-radius:10px; padding:12px; margin:15px 0;">
+                            <p style="margin:0; font-size:13px; color:#856404; font-weight:600;">⏱️ পরবর্তী পরীক্ষা: <strong>${timeLeft}</strong> পরে</p>
+                            <p style="margin:5px 0 0; font-size:12px; color:#856404;">(প্রতিদিন রাত ৯টায় নতুন সেশন শুরু হয়)</p>
+                        </div>
+                        <a href="https://wa.me/8801750733269?text=আমি%20প্রিমিয়াম%20হতে%20চাই" target="_blank" style="display:block; background:#25d366; color:white; padding:13px; border-radius:12px; text-decoration:none; font-weight:700;">📲 আনলিমিটেড পরীক্ষার জন্য প্রিমিয়াম হোন</a>
+                    </div>`;
+                showModal(content, [{ text: "বন্ধ করুন", class: "btn-danger" }]);
+                return false;
+            }
+            return true;
+        };
+
+        // ===== ৩. কাউন্টার বাড়ানোর চূড়ান্ত ফাংশন (সবচেয়ে গুরুত্বপূর্ণ) =====
+        // এই ফাংশনটি নিশ্চিত করে যে পরীক্ষার সংখ্যা localStorage এ আপডেট হবে
+        window.incrementTodayExamCount = function() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user || user.exam_permission === true) return; // প্রিমিয়াম হলে কাউন্ট হবে না
+
+            const periodStart = getPeriodStart();
+            const examLog = JSON.parse(localStorage.getItem('dailyExamLog') || '{}');
+            const userLog = examLog[user.phone] || { count: 0, periodStart: 0 };
+            
+            if (userLog.periodStart < periodStart) {
+                examLog[user.phone] = { count: 1, periodStart: periodStart };
+            } else {
+                examLog[user.phone] = { count: (userLog.count || 0) + 1, periodStart: periodStart };
+            }
+            localStorage.setItem('dailyExamLog', JSON.stringify(examLog));
+            console.log("✅ Daily exam count incremented. New count:", examLog[user.phone].count);
+        };
+
+        // ===== ৪. পরীক্ষা শুরু করার ফাংশনগুলো ফিক্স করা =====
+
+        // বিষয়ভিত্তিক পরীক্ষা (সিলেবাস পেজ থেকে)
+        if (typeof window.sv3StartExam === 'function') {
+            window.sv3StartExam = function(subjectId, subjectTitle) {
+                const input = document.getElementById('sv3-input-' + subjectId);
+                const count = parseInt(input ? input.value : 10);
+
+                if (isNaN(count) || count < 5 || count > 30) {
+                    // ভ্যালিডেশন এরর দেখানোর কোড এখানে থাকবে...
+                    return;
+                }
+                
+                // এখানে যোগ্যতা চেক করার দরকার নেই, কারণ আগের পেজেই হয়েছে।
+                
+                // ✅✅✅ কাউন্টার বাড়ানোর কোডটি এখানে নিশ্চিত করা হলো ✅✅✅
+                incrementTodayExamCount();
+
+                // এখন প্রশ্ন লোড হবে
+                if (typeof window.currentExamSubject !== 'undefined') {
+                    window.currentExamSubject = subjectTitle;
+                }
+                if (typeof window.loadQuestions === 'function') {
+                    loadQuestions("get_subject_questions", { subject: subjectId, count: count });
+                }
+            };
+            console.log("Patched: sv3StartExam");
+        }
+
+        // মডেল টেস্ট
+        if (typeof window.startModelTest === 'function') {
+            const originalStartModelTest = window.startModelTest;
+            window.startModelTest = function() {
+                // শুধু যোগ্যতা চেক নিশ্চিত করা
+                if (!checkExamEligibility(true)) return;
+                originalStartModelTest();
+            };
+            console.log("Patched: startModelTest");
+        }
+
+        // ===== ৫. প্রোফাইল কাউন্টার বার ফিক্স করা =====
+        // এই ফাংশনটি ড্যাশবোর্ডে সঠিক তথ্য দেখাবে
+        function addFreeUserNotice() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user || user.role === 'admin') return;
+
+            const oldNotice = document.getElementById('free-user-notice');
+            if (oldNotice) oldNotice.remove();
+
+            const isPremium = user.exam_permission === true;
+            let noticeHTML = '';
+
+            if (isPremium) {
+                noticeHTML = `<div style="background:linear-gradient(135deg,#fef3c7,#fde68a); border:2px solid #f59e0b; border-radius:14px; padding:15px 18px; margin:15px 10px; text-align:center;"><p style="margin:0; font-size:14px; color:#92400e; font-weight:700;">⭐ <strong>আপনি একজন প্রিমিয়াম সদস্য! আনলিমিটেড পরীক্ষা দিন।</strong></p></div>`;
+            } else {
+                const todayCount = getTodayExamCount();
+                const remaining = Math.max(0, FREE_DAILY_EXAM_LIMIT - todayCount);
+                const timeLeft = getNextResetTime();
+                const progressPercent = (todayCount / FREE_DAILY_EXAM_LIMIT) * 100;
+                
+                noticeHTML = `<div style="background:linear-gradient(135deg,#eff6ff,#dbeafe); border:2px solid #3b82f6; border-radius:14px; padding:15px 18px; margin:15px 10px;">
+                    <h4 style="margin:0 0 12px; color:#1e40af; font-size:15px;">📋 ফ্রী সদস্যের পরীক্ষার স্ট্যাটাস</h4>
+                    <div style="background:white; border-radius:10px; padding:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <span style="font-size:13px; font-weight:600;">আজকের পরীক্ষা:</span>
+                            <span style="font-weight:800; color:${remaining > 0 ? '#16a34a' : '#dc3545'};">${todayCount}/${FREE_DAILY_EXAM_LIMIT} টি</span>
+                        </div>
+                        <div style="background:#e5e7eb; border-radius:10px; height:10px; overflow:hidden;">
+                            <div style="width:${progressPercent}%; height:100%; background:${remaining > 0 ? 'linear-gradient(90deg,#3b82f6,#6366f1)' : '#dc3545'};"></div>
+                        </div>
+                        ${remaining > 0 ? 
+                            `<p style="margin:8px 0 0; font-size:12px; color:#16a34a; font-weight:600;">✅ আপনার আরও <strong>${remaining}টি</strong> পরীক্ষা দেওয়ার সুযোগ আছে।</p>` : 
+                            `<p style="margin:8px 0 0; font-size:12px; color:#dc3545; font-weight:600;">⏰ পরবর্তী সুযোগ: <strong>${timeLeft}</strong> পরে।</p>`
+                        }
+                    </div>
+                </div>`;
+            }
+
+            const noticeDiv = document.createElement('div');
+            noticeDiv.id = 'free-user-notice';
+            noticeDiv.innerHTML = noticeHTML;
+            
+            const dashboard = document.getElementById('student-dashboard');
+            const profileHero = dashboard ? dashboard.querySelector('.enh-profile-hero') : null;
+            if (profileHero) {
+                profileHero.insertAdjacentElement('afterend', noticeDiv);
+            }
+        }
+        
+        // ড্যাশবোর্ড লোড হওয়ার সময় কাউন্টার আপডেট নিশ্চিত করা
+        if (typeof window.displayStudentDashboard === 'function') {
+            const originalDisplayDashboard = window.displayStudentDashboard;
+            window.displayStudentDashboard = function(user) {
+                originalDisplayDashboard(user);
+                setTimeout(() => addFreeUserNotice(), 100);
+            };
+            console.log("Patched: displayStudentDashboard to show notice bar.");
+        }
+    });
 })();
 </script>
-<!-- ====== END OF FINAL FIX SCRIPT ====== -->
+<!-- ============================================================ -->
 </body>
 </html>
